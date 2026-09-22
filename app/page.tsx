@@ -8,6 +8,29 @@ export default function Home() {
   const [analisando, setAnalisando] = useState(false);
   const [dadosPerfil, setDadosPerfil] = useState<any>(null);
   const [resultadoAnalise, setResultadoAnalise] = useState<any>(null);
+  const [mostrarDesbloqueio, setMostrarDesbloqueio] = useState(false);
+
+  function solicitarAnalise() {
+    if (!perfil.trim()) {
+      alert("Digite seu @ ou cole o link do Instagram.");
+      return;
+    }
+
+    setMostrarDesbloqueio(true);
+  }
+
+  function abrirInstagram() {
+    window.open(
+      "https://www.instagram.com/victormiranda_mkt/",
+      "_blank",
+      "noopener,noreferrer"
+    );
+  }
+
+  function liberarAnalise() {
+    setMostrarDesbloqueio(false);
+    analisarPerfil();
+  }
 
   async function analisarPerfil() {
     if (!perfil.trim()) {
@@ -104,10 +127,7 @@ export default function Home() {
 
           const analise = await respostaAnalise.json();
 
-          if (
-            !respostaAnalise.ok ||
-            !analise.sucesso
-          ) {
+          if (!respostaAnalise.ok || !analise.sucesso) {
             throw new Error(
               analise.erro ||
                 "Não foi possível gerar o diagnóstico."
@@ -296,7 +316,7 @@ export default function Home() {
             onChange={(e) => setPerfil(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter" && !analisando) {
-                analisarPerfil();
+                solicitarAnalise();
               }
             }}
             placeholder="@seuusuario ou link do Instagram"
@@ -305,7 +325,7 @@ export default function Home() {
           />
 
           <button
-            onClick={analisarPerfil}
+            onClick={solicitarAnalise}
             disabled={analisando}
             className="rounded-xl bg-black px-6 py-4 font-bold text-white transition hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
           >
@@ -314,6 +334,68 @@ export default function Home() {
               : "Analisar gratuitamente →"}
           </button>
         </div>
+
+        {mostrarDesbloqueio && !analisando && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-6 py-10"
+            onClick={() => setMostrarDesbloqueio(false)}
+          >
+            <div
+              className="w-full max-w-lg rounded-[32px] bg-[#f7f6f2] p-8 text-left shadow-2xl md:p-10"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                type="button"
+                onClick={() => setMostrarDesbloqueio(false)}
+                className="ml-auto block text-2xl leading-none text-neutral-400 transition hover:text-black"
+                aria-label="Fechar"
+              >
+                ×
+              </button>
+
+              <p className="mt-3 text-xs font-bold tracking-[3px] text-neutral-500">
+                ANÁLISE GRATUITA
+              </p>
+
+              <h3 className="mt-3 text-3xl font-black tracking-[-1px] md:text-4xl">
+                Desbloqueie sua análise gratuita.
+              </h3>
+
+              <p className="mt-5 leading-7 text-neutral-600">
+                Para apoiar o projeto e acompanhar mais
+                conteúdos sobre marketing, conteúdo e presença
+                digital, siga
+                <span className="font-bold text-black">
+                  {" "}
+                  @victormiranda_mkt
+                </span>{" "}
+                no Instagram.
+              </p>
+
+              <button
+                type="button"
+                onClick={abrirInstagram}
+                className="mt-7 w-full rounded-xl bg-black px-6 py-4 font-bold text-white transition hover:opacity-80"
+              >
+                1. Seguir @victormiranda_mkt no Instagram ↗
+              </button>
+
+              <button
+                type="button"
+                onClick={liberarAnalise}
+                className="mt-3 w-full rounded-xl border border-black/15 bg-white px-6 py-4 font-bold text-black transition hover:bg-neutral-100"
+              >
+                2. Já estou seguindo — liberar análise
+              </button>
+
+              <p className="mt-5 text-center text-xs leading-5 text-neutral-400">
+                A confirmação é feita por você. O Analisa Aí
+                não acessa sua conta nem verifica sua lista de
+                seguidores.
+              </p>
+            </div>
+          </div>
+        )}
 
         {analisando && (
           <div className="mx-auto mt-6 max-w-xl">
@@ -324,8 +406,8 @@ export default function Home() {
             </p>
 
             <p className="mt-1 text-xs text-neutral-400">
-              Estamos coletando e processando as
-              informações públicas do perfil.
+              Estamos coletando e processando as informações
+              públicas do perfil.
             </p>
           </div>
         )}
@@ -345,8 +427,8 @@ export default function Home() {
             Entenda seu perfil
           </h3>
           <p className="mt-2 leading-7 text-neutral-500">
-            Veja os principais sinais encontrados na
-            estrutura e no conteúdo do perfil.
+            Veja os principais sinais encontrados na estrutura
+            e no conteúdo do perfil.
           </p>
         </div>
 
@@ -389,9 +471,8 @@ export default function Home() {
             </h2>
 
             <p className="mt-6 max-w-lg leading-7 text-neutral-600">
-              O Analisa Aí transforma informações públicas
-              do Instagram em uma leitura simples, direta e
-              útil.
+              O Analisa Aí transforma informações públicas do
+              Instagram em uma leitura simples, direta e útil.
             </p>
           </div>
 
